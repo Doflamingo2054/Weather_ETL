@@ -1,0 +1,24 @@
+# Fichiers Airflow & DB
+airflow.cfg
+webserverdb.sqlite
+*.sqlite3
+*.db
+*.pid
+logs/
+webserver_config.py
+
+
+# Fichiers Python générés
+*.log
+venv/
+__pycache__/
+*.pyc
+__pypackages__/
+
+# Fichiers de cache et IDE
+.env
+.env/
+.mypy_cache/
+.pytest_cache/
+.cache/
+.vscode/
