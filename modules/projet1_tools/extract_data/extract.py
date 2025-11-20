@@ -6,7 +6,8 @@ api_url1 = "https://api.api-ninjas.com/v1/geocoding"
 
 api_url2 = "https://api.api-ninjas.com/v1/weather"
 
-api_key = "L3DZU6ivHtg5eCfub8nkHg==53WVcTizrCToP6yN"
+# Pour l'api Key , mettez la clé de votre api
+api_key = []
 
 headers= {
     "X-Api-Key": api_key
