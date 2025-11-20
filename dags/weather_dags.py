@@ -1,4 +1,6 @@
 import logging
+import sys
+import pathlib
 from typing import Any, TYPE_CHECKING
 from airflow.decorators import dag, task
 from airflow.exceptions import AirflowFailException
@@ -10,6 +12,13 @@ import os
 log = logging.getLogger(__name__)
 
 filepath = "data/processed/weather_data.csv"
+
+# airflow execute les dags dans un environnement où le repertoire courant
+# n'est pas forcement le root du projet, donc on ajoute le chemin du projet
+_this_file = pathlib.Path(__file__).resolve()
+_project_root = str(_this_file.parent.parent)
+if _project_root not in sys.path:
+    sys.path.insert(0, _project_root)
 
 pays = {
     "Afrique du Sud": ("Pretoria", "ZA"),
@@ -34,7 +43,7 @@ pays = {
         "retries": 1,
         "retry_delay": timedelta(minutes=5),
     },
-    schedule_interval="@daily",
+    schedule="@daily",
     catchup=False,
     tags=["weather", "etl"],
 )
@@ -45,7 +54,6 @@ def weather_etl_dag():
         """Extraire les données de l'API pour tous les pays et écrire un CSV brut. Retourne le chemin du fichier brut."""
         # C'est dans le cas où il y'a un gros volume de données à extraire et on ne veut pas tout garder en mémoire
         from modules.projet1_tools.extract_data.extract import extract_from_api
-
         all_data = []
         for country, (city, iso_code) in pays.items():
             raw_json = extract_from_api(city, country, iso_code)
@@ -68,6 +76,7 @@ def weather_etl_dag():
             # pour éviter les erreurs plus tard, on crée un fichier vide
             pd.DataFrame().to_csv(raw_path, index=False)
             log.warning("Aucune donnée collectée pour tous les pays. Fichier vide créé: %s", raw_path)
+
 
         return raw_path
 
